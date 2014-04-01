@@ -11,7 +11,7 @@ struct data
 		unsigned type,time,length;
 		char *msg;
 		friend io::bin_reader& operator>>(io::bin_reader &in,data &obj);
-		friend io::bin_writer& operator<<(io::bin_writer &out,data &obj);
+		friend io::bin_writer& operator<<(io::bin_writer &out,const data &obj);
 		data():msg(NULL){}
 		~data()
 		{
@@ -33,7 +33,7 @@ io::bin_reader& operator>>(io::bin_reader &in,data &obj)
 		return in;
 
 	}
-	io::bin_writer& operator<<(io::bin_writer &out,data &obj)
+	io::bin_writer& operator<<(io::bin_writer &out,const data &obj)
 	{
 		out.write(obj.type);
 		out.write(obj.time);
@@ -51,7 +51,7 @@ class task
 	static const unsigned max_difference=2u;
 public:
 	task()
-		: in(BINARY_DIR"/input.txt" ),out(BINARY_DIR"/output.txt")
+		: in(SOURCE_DIR"/input.txt" ),out(SOURCE_DIR"/output.txt")
 	{
 		if (!in.is_open()) throw(std::logic_error("Can't open Input"));
 		if (!out.is_open()) throw(std::logic_error("Can't open Output"));
@@ -95,7 +95,7 @@ void main()
 	{
 		std::cout<<message.what()<<"\n";
 	}
-	catch(std::exception )
+	catch(const std::exception& )
 	{
 		std::cout<<"Unknown error";
 	}

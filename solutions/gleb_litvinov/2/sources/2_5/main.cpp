@@ -48,7 +48,7 @@ class task
 	io::bin_writer out;
 public:
 	task()
-		: in(BINARY_DIR"/input.txt" ),out(BINARY_DIR"/output.txt")
+		: in(SOURCE_DIR"/input.txt" ),out(SOURCE_DIR"/output.txt")
 	{   
 		if (!in.is_open()) throw(std::logic_error("Can't open file"));
 		if (!out.is_open()) throw(std::logic_error("Can't open file "));
@@ -117,7 +117,7 @@ void main()
 	{
 		std::cout<<message.what()<<"\n";
 	}
-	catch(std::exception )
+	catch(const std::exception& )
 	{
 		std::cout<<"Unknown error";
 	}

@@ -14,7 +14,7 @@ struct data
 		char* date;
 		char* name;
 		friend io::bin_reader& operator>>(io::bin_reader &in,data &obj);
-		friend io::bin_writer& operator<<(io::bin_writer &out,data &obj);
+		friend io::bin_writer& operator<<(io::bin_writer &out,const data &obj);
 	};
 
 	io::bin_reader& operator>>(io::bin_reader &in,data &obj)
@@ -34,7 +34,7 @@ struct data
 		return in;
 
 	}
-	io::bin_writer& operator<<(io::bin_writer &out,data &obj)
+	io::bin_writer& operator<<(io::bin_writer &out,const data &obj)
 	{
 		out.write(obj.name,9);
 		out.write(obj.dat);
@@ -53,7 +53,7 @@ public:
 	
 
 	task()
-		: in(SOURCE_DIR"/input.txt" ),out(BINARY_DIR"/output.txt")
+		: in(SOURCE_DIR"/input.txt" ),out(SOURCE_DIR"/output.txt")
 	{
 		if (!in.is_open()) throw(std::logic_error("Can't open file"));
 		if (!out.is_open()) throw(std::logic_error("Can't open file "));
@@ -92,7 +92,7 @@ void main()
 	{
 		std::cout<<message.what()<<"\n";
 	}
-	catch(std::exception )
+	catch(const std::exception&  )
 	{
 		std::cout<<"Unknown error";
 	}

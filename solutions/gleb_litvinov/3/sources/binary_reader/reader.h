@@ -18,7 +18,6 @@ namespace io
 				in.read(reinterpret_cast< char* >( &a ), sizeof( T ) );
 			}
 			void read(char* a,const size_t length);
-			std::string read(const size_t length);
 			bool is_open()const;
 			bool eof() const;
 				

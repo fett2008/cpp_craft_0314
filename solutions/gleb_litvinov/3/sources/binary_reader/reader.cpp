@@ -3,17 +3,6 @@
 
 namespace io
 {
-	std::string bin_reader::read(const size_t length)
-	{
-		char *c;
-		c = new char [length+1];
-		std::string tmp;
-		in.read(c,length);
-		tmp.assign(c,c+length);
-		delete []c;
-		return tmp;
-	}
-
 	bin_reader::bin_reader()
 	{}
 

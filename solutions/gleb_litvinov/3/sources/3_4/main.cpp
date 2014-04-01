@@ -22,7 +22,7 @@ class task
 		unsigned type,time,length;
 		char *msg;
 		friend io::bin_reader& operator>>(io::bin_reader &in,data &obj);
-		friend io::bin_writer& operator<<(io::bin_writer &out,data &obj);
+		friend io::bin_writer& operator<<(io::bin_writer &out,const data &obj);
 		data():msg(NULL){}
 		~data()
 		{
@@ -46,7 +46,7 @@ class task
 	}
 
 
-	friend io::bin_writer& operator<<(io::bin_writer &out,data &obj)
+	friend io::bin_writer& operator<<(io::bin_writer &out,const data &obj)
 	{
 		out.write(obj.type);
 		out.write(obj.time);
@@ -72,7 +72,7 @@ public:
 		out.open(pref+"output.txt");
 			if (!out.is_open())
 				throw(std::logic_error("Can't open file"));
-		for(int i=0;i<f_count;++i)
+		for(int i=0;i<t_count;++i)
 			t.create_thread( boost::bind(&task::solve,this));
 		t.join_all();
 	}
@@ -82,8 +82,8 @@ public:
 		io::bin_reader in;
 		io::bin_writer out;
 		{
-			char c[4];
 			boost::mutex::scoped_lock lock(mtx);
+			char c[4];
 			while(!in.is_open() && file_number<f_count)
 			{
 				sprintf(c,"%03d",file_number);
@@ -130,7 +130,7 @@ void main()
 	{
 		std::cout<<message.what()<<"\n";
 	}
-	catch(std::exception )
+	catch(const std::exception& )
 	{
 		std::cout<<"Unknown error";
 	}

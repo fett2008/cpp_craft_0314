@@ -49,7 +49,6 @@ class task
 			}
 			return in;
 	}
-	data current_data;
 public:
 	task()
 	{}
@@ -58,13 +57,12 @@ public:
 	{
 			io::bin_writer out;
 		file_number=0;
-		boost::thread_group t;
 		out.open(pref+"output.txt");
 			if (!out.is_open())
 				throw(std::logic_error("Can't open file"));
 		file_number=0;
 		boost::thread_group t;
-		for(int i=0;i<f_count;++i)
+		for(int i=0;i<t_count;++i)
 			t.create_thread( boost::bind(&task::solve,this));
 		t.join_all();
 		for (mmap::iterator it=met.begin();it!=met.end();it++)
@@ -80,8 +78,8 @@ public:
 	{
 		io::bin_reader in;
 		{
-			char c[4];
 			boost::mutex::scoped_lock lock(mtx);
+			char c[4];
 			while(!in.is_open() && file_number<f_count)
 			{
 				sprintf(c,"%03d",file_number);
@@ -93,6 +91,7 @@ public:
 		}
 		std::set<unsigned> last;
 		std::map<unsigned,size_t> size;
+		data current_data;
 		in>>current_data;
 		unsigned curr_time=0;
 		while (!in.eof())
@@ -147,7 +146,7 @@ void main()
 	{
 		std::cout<<message.what()<<"\n";
 	}
-	catch(std::exception )
+	catch(const std::exception& )
 	{
 		std::cout<<"Unknown error";
 	}

@@ -3,6 +3,8 @@
 task4_5::solution::solution( const data_type& data )
 {
 	this->data=data;
+	min = std::numeric_limits< int >().max();
+	max= std::numeric_limits< int >().min();
 }
 
 void task4_5::solution::start() const
@@ -35,13 +37,13 @@ void task4_5::solution::solve(const std::vector<int> &tmp) const
 
 int task4_5::solution::get_min() const
 {
-	min = std::numeric_limits< int >().max();
-	start();
+	if (min == std::numeric_limits< int >().max())
+		start();
 	return min;
 }
 int task4_5::solution::get_max() const
 {
-	max= std::numeric_limits< int >().min();
-	start();
+	if (max== std::numeric_limits< int >().min())
+		start();
 	return max;
 }

@@ -55,7 +55,7 @@ public:
 
 	void start()
 	{
-			io::bin_writer out;
+		io::bin_writer out;
 		file_number=0;
 		out.open(pref+"output.txt");
 			if (!out.is_open())
@@ -146,9 +146,9 @@ void main()
 	{
 		std::cout<<message.what()<<"\n";
 	}
-	catch(const std::exception& )
+	catch(const std::exception& e)
 	{
-		std::cout<<"Unknown error";
+		std::cout<<e.what();
 	}
 	catch( ... )
 	{

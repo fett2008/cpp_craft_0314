@@ -1,7 +1,7 @@
 @echo off
 
 set BOOST_ROOT=d:\instal\boost\boost_1_54_0\bboost\
-set SOLUTION_NAME=week3
+set SOLUTION_NAME=week4
 
 set BUILD_TYPE=Debug
 if [%1]==[Release] (

@@ -51,7 +51,7 @@ class task
 	static const unsigned max_difference=2u;
 public:
 	task()
-		: in(SOURCE_DIR"/input.txt" ),out(SOURCE_DIR"/output.txt")
+		: in(BINARY_DIR"/input.txt" ),out(BINARY_DIR"/output.txt")
 	{
 		if (!in.is_open()) throw(std::logic_error("Can't open Input"));
 		if (!out.is_open()) throw(std::logic_error("Can't open Output"));
@@ -95,9 +95,9 @@ void main()
 	{
 		std::cout<<message.what()<<"\n";
 	}
-	catch(const std::exception& )
+	catch(const std::exception& e )
 	{
-		std::cout<<"Unknown error";
+		std::cout<<e.what();
 	}
 		catch( ... )
 	{

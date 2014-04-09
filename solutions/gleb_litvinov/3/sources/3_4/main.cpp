@@ -126,9 +126,9 @@ void main()
 	{
 		std::cout<<message.what()<<"\n";
 	}
-	catch(const std::exception& )
+	catch(const std::exception& e)
 	{
-		std::cout<<"Unknown error";
+		std::cout<<e.what();
 	}
 		catch( ... )
 	{

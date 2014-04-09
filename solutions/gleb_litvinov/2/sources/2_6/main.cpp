@@ -37,6 +37,7 @@ struct data
 	io::bin_writer& operator<<(io::bin_writer &out,const data &obj)
 	{
 		out.write(obj.name,9);
+		
 		out.write(obj.dat);
 		out.write(obj.price);
 		out.write(obj.volume);
@@ -53,7 +54,7 @@ public:
 	
 
 	task()
-		: in(SOURCE_DIR"/input.txt" ),out(SOURCE_DIR"/output.txt")
+		: in(BINARY_DIR"/input.txt" ),out(BINARY_DIR"/output.txt")
 	{
 		if (!in.is_open()) throw(std::logic_error("Can't open file"));
 		if (!out.is_open()) throw(std::logic_error("Can't open file "));
@@ -67,13 +68,12 @@ public:
 		while (!in.eof())
 		{
 			unsigned y,m,d;
+			current_data.price=current_data.vwap;
 			sscanf(current_data.date,"%4d%2d%2d",&y,&m,&d);
 			current_data.dat=((y-1)*372u+(m-1)*31u+d);
 			out<<current_data;
 			in>>current_data;
 		}
-
-
 	}
 	
 
@@ -92,9 +92,9 @@ void main()
 	{
 		std::cout<<message.what()<<"\n";
 	}
-	catch(const std::exception&  )
+	catch(const std::exception& e)
 	{
-		std::cout<<"Unknown error";
+		std::cout<<e.what();
 	}
 	catch( ... )
 	{

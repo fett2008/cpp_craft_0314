@@ -51,7 +51,7 @@ class task
 		return out;
 
 	}
-	std::map<std::string,std::vector<data>> map_;
+	std::map<std::string,std::vector<data>> my_map;
 	std::map<std::string,std::vector<data>>::iterator it;
 	boost::mutex mtx;
 	static const unsigned t_count=4;
@@ -75,12 +75,13 @@ public:
 		while (!in.eof())
 		{
 			unsigned y,m,d;
+			current_data.price=current_data.vwap;
 			sscanf(current_data.date,"%4d%2d%2d",&y,&m,&d);
 			current_data.dat=((y-1)*372u+(m-1)*31u+d);
-			map_[boost::lexical_cast<std::string>(current_data.name)].push_back(current_data);
+			my_map[boost::lexical_cast<std::string>(current_data.name)].push_back(current_data);
 			in>>current_data;
 		}
-		it=map_.begin();
+		it=my_map.begin();
 		boost::thread_group t;
 		for(int i=0;i<t_count;++i)
 			t.create_thread( boost::bind(&task::process,this));
@@ -94,7 +95,7 @@ public:
 		io::bin_writer out;
 		{
 			boost::mutex::scoped_lock lock(mtx);
-			if (it==map_.end()) return;
+			if (it==my_map.end()) return;
 			out.open(pref+"output_"+it->first+".txt");
 			if (!out.is_open())
 				throw(std::logic_error("Can't open file"));
@@ -102,8 +103,8 @@ public:
 			size_=it->second.size();
 			it++;
 		}
-			for(unsigned i=0;i<static_cast<unsigned>(size_);++i)
-				out<<v->operator[](i);
+		for(unsigned i=0;i<static_cast<unsigned>(size_);++i)
+			out<<v->operator[](i);
 	}
 	
 
@@ -122,9 +123,9 @@ void main()
 	{
 		std::cout<<message.what()<<"\n";
 	}
-	catch(const std::exception& )
+	catch(const std::exception& e)
 	{
-		std::cout<<"Unknown error";
+		std::cout<<e.what();
 	}
 	catch( ... )
 	{

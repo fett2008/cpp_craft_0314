@@ -14,10 +14,10 @@ namespace task4_5
 		mutable boost::mutex  mtx;
 		data_type data;
 		mutable int max,min;
-	public:
-		explicit solution( const data_type& data );
 		void start() const;
 		void solve(const std::vector<int> &tmp)const ;
+	public:
+		explicit solution( const data_type& data );
 		int get_min() const;
 		int get_max() const;
 	};

@@ -15,6 +15,11 @@ struct data
 		char* name;
 		friend io::bin_reader& operator>>(io::bin_reader &in,data &obj);
 		friend io::bin_writer& operator<<(io::bin_writer &out,const data &obj);
+		~data()
+		{
+			delete[] date;
+			delete[] name;
+		}
 	};
 
 	io::bin_reader& operator>>(io::bin_reader &in,data &obj)
@@ -37,7 +42,6 @@ struct data
 	io::bin_writer& operator<<(io::bin_writer &out,const data &obj)
 	{
 		out.write(obj.name,9);
-		
 		out.write(obj.dat);
 		out.write(obj.price);
 		out.write(obj.volume);

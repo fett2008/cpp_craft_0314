@@ -11,10 +11,10 @@ class task
 {
 	static const unsigned t_count=4;
 	static const unsigned f_count=1000;
-	static const std::string pref;
-	int file_number;
 	static const unsigned max_type=5u;
 	static const unsigned max_difference=2u;
+	static const std::string pref;
+	int file_number;
 	boost::mutex mtx;
 
 	struct data
@@ -67,10 +67,8 @@ public:
 	void start()
 	{
 		io::bin_writer out;
-		file_number=0;
+		file_number=1;
 		boost::thread_group t;
-			if (!out.is_open())
-				throw(std::logic_error("Can't open file"));
 		for(int i=0;i<t_count;++i)
 			t.create_thread( boost::bind(&task::solve,this));
 		t.join_all();
@@ -83,16 +81,14 @@ public:
 		{
 			boost::mutex::scoped_lock lock(mtx);
 			char c[4];
+			if (file_number==f_count) return;
 			while(!in.is_open() && file_number<f_count)
 			{
 				sprintf(c,"%03d",file_number);
 				in.open(pref+"input_"+c+".txt");
+				out.open(pref+"output_"+c+".txt");
 				file_number++;
 			}
-			file_number--;
-			sprintf(c,"%03d",file_number);
-			out.open(pref+"output_"+c+".txt");
-			file_number++;
 		}
 		data current_data;
 		in>>current_data;

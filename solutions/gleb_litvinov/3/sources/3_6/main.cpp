@@ -20,6 +20,12 @@ class task
 		double f1, t1, f2, f3, f4,price,vwap;
 		char* date;
 		char* name;
+		~data()
+		{
+			delete[] name;
+			delete[] date;
+
+		}
 		friend io::bin_reader& operator>>(io::bin_reader &in,data &obj);
 		friend io::bin_writer& operator<<(io::bin_writer &out,const data &obj);
 	};
@@ -51,8 +57,8 @@ class task
 		return out;
 
 	}
-	std::map<std::string,std::vector<data>> my_map;
-	std::map<std::string,std::vector<data>>::iterator it;
+	std::map<std::string,std::vector<data*>> my_map;
+	std::map<std::string,std::vector<data*>>::iterator it;
 	boost::mutex mtx;
 	static const unsigned t_count=4;
 	io::bin_reader in;
@@ -78,7 +84,7 @@ public:
 			current_data.price=current_data.vwap;
 			sscanf(current_data.date,"%4d%2d%2d",&y,&m,&d);
 			current_data.dat=((y-1)*372u+(m-1)*31u+d);
-			my_map[boost::lexical_cast<std::string>(current_data.name)].push_back(current_data);
+			my_map[boost::lexical_cast<std::string>(current_data.name)].push_back(&current_data);
 			in>>current_data;
 		}
 		it=my_map.begin();
@@ -91,7 +97,7 @@ public:
 	void process()
 	{
 		size_t size_;
-		const std::vector<data> *v;
+		const std::vector<data*> *v;
 		io::bin_writer out;
 		{
 			boost::mutex::scoped_lock lock(mtx);
@@ -104,7 +110,7 @@ public:
 			it++;
 		}
 		for(unsigned i=0;i<static_cast<unsigned>(size_);++i)
-			out<<v->operator[](i);
+			out<<*v->operator[](i);
 	}
 	
 

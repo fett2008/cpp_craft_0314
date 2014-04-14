@@ -74,7 +74,7 @@ public:
 					size[current_data.type]=current_data.get_size();
 					if (last.find(current_data.type)==last.end())
 					times[current_data.type]++;
-					last.insert(current_data.type);					
+					last.insert(current_data.type);
 					met[current_data.type]++;
 				}
 				curr_time=current_data.time;

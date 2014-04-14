@@ -12,9 +12,8 @@ namespace task4_5
 	class solution
 	{
 		mutable boost::mutex  mtx;
-		data_type data;
 		mutable int max,min;
-		void start() const;
+		void start(const data_type& data ) const;
 		void solve(const std::vector<int> &tmp)const ;
 	public:
 		explicit solution( const data_type& data );

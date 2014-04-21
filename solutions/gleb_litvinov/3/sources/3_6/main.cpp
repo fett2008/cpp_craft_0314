@@ -89,7 +89,7 @@ public:
 		}
 		it=my_map.begin();
 		boost::thread_group t;
-		for(int i=0;i<t_count;++i)
+		for(int i=0;i<my_map.size();++i)
 			t.create_thread( boost::bind(&task::process,this));
 		t.join_all();
 

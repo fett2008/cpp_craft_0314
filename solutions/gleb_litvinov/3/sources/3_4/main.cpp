@@ -9,7 +9,7 @@
 #include <boost/thread.hpp>
 class task
 {
-	static const unsigned t_count=4;
+	static const unsigned t_count=1000;
 	static const unsigned f_count=1000;
 	static const unsigned max_type=5u;
 	static const unsigned max_difference=2u;

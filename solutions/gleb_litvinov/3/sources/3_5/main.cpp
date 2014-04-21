@@ -9,26 +9,26 @@
 #include<iostream>
 #include <boost/thread.hpp>
 #include <boost/ref.hpp>
+#include <boost/cstdint.hpp>
 
-typedef  std::map<unsigned,int> mmap;
+typedef  std::map<boost::uint32_t,int> mmap;
 
 class task
 {
 	int file_number;
 	boost::mutex mtx;
-	static const unsigned t_count=4;
+	static const unsigned t_count=1000;
 	static const unsigned f_count=1000;
 	static const std::string pref;
 	static const size_t max_memory=2048ul;
-	mmap met,times;
 	struct data
 	{
-		unsigned type,time,length;
+		boost::uint32_t type,time,length;
 		char *msg;
 		friend io::bin_reader& operator>>(io::bin_reader &in,data &obj);
 		size_t get_size()
 		{
-			return sizeof(unsigned)*3+length;
+			return sizeof(boost::uint32_t)*3+length;
 		}
 		data():msg(NULL){}
 		~data()
@@ -48,52 +48,31 @@ class task
 				in.read(obj.msg,obj.length);
 			}
 			return in;
-	}
-public:
-	task()
-	{}
-
-	void start()
-	{
-		io::bin_writer out;
-		file_number=0;
-		out.open(pref+"output.txt");
-			if (!out.is_open())
-				throw(std::logic_error("Can't open file"));
-		file_number=0;
-		boost::thread_group t;
-		for(int i=0;i<t_count;++i)
-			t.create_thread( boost::bind(&task::solve,this));
-		t.join_all();
-		for (mmap::iterator it=met.begin();it!=met.end();it++)
-		{
-			unsigned i=it->first;
-			out.write(i);
-			const double temp=double(it->second)/times[it->first];
-			out.write(temp);
 		}
-	}
-
 	void solve()
 	{
 		io::bin_reader in;
+		io::bin_writer out;
 		{
 			boost::mutex::scoped_lock lock(mtx);
 			char c[4];
+			if (file_number==f_count) return;
 			while(!in.is_open() && file_number<f_count)
 			{
 				sprintf(c,"%03d",file_number);
 				in.open(pref+"input_"+c+".txt");
+				out.open(pref+"output_"+c+".txt");
 				file_number++;
 			}
 			if (!in.is_open())
 				throw(std::logic_error("Can't open file"));
 		}
-		std::set<unsigned> last;
-		std::map<unsigned,size_t> size;
+		mmap met,times;
+		std::set<boost::uint32_t> last;
+		std::map<boost::uint32_t,size_t> size;
 		data current_data;
 		in>>current_data;
-		unsigned curr_time=0;
+		boost::uint32_t curr_time=0;
 		while (!in.eof())
 		{
 			if ( current_data.time != curr_time || last.find(current_data.type) == last.end() )
@@ -105,12 +84,12 @@ public:
 					size[current_data.type]=current_data.get_size();
 					if (last.find(current_data.type)==last.end())
 					{
-						boost::mutex::scoped_lock lock(mtx);
+						//boost::mutex::scoped_lock lock(mtx);
 						times[current_data.type]++;
 					}
 					last.insert(current_data.type);
 					{
-						boost::mutex::scoped_lock lock(mtx);
+						//boost::mutex::scoped_lock lock(mtx);
 						met[current_data.type]++;
 					}
 				}
@@ -121,16 +100,36 @@ public:
 			if (current_data.get_size()+size[current_data.type]<=max_memory)
 			{
 				{
-					boost::mutex::scoped_lock lock(mtx);
+					//boost::mutex::scoped_lock lock(mtx);
 					met[current_data.type]++;
 				}
 				size[current_data.type]+=current_data.get_size();
 			}			
 			curr_time=current_data.time;
 			in>>current_data;
-			
 		}
+		for (mmap::iterator it=met.begin();it!=met.end();it++)
+			{
+				boost::uint32_t i=it->first;
+				out.write(i);
+				const double temp=double(it->second)/times[it->first];
+				out.write(temp);
+			}
 	}
+
+public:
+	task()
+	{}
+
+	void start()
+	{
+		file_number=1;
+		boost::thread_group t;
+		for(int i=0;i<t_count;++i)
+			t.create_thread( boost::bind(&task::solve,this));
+		t.join_all();
+	}
+
 };
 
 const std::string task::pref=BINARY_DIR"/";
